@@ -1,24 +1,28 @@
 import { useEffect, useState } from "react";
+import { connectWallet } from "./utils/rpc";
 
 const Minter = (props) => {
-
   //State variables
   const [walletAddress, setWallet] = useState("");
   const [status, setStatus] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [url, setURL] = useState("");
- 
-  useEffect(async () => { //TODO: implement
-    
+
+  useEffect(async () => {
+    //TODO: implement
   }, []);
 
-  const connectWalletPressed = async () => { //TODO: implement
-   
+  const connectWalletPressed = async () => {
+    //TODO: implement
+    const result = await connectWallet();
+    setStatus(result.status);
+    setWallet(result.address);
+    console.log(result, 'result')
   };
 
-  const onMintPressed = async () => { //TODO: implement
-    
+  const onMintPressed = async () => {
+    //TODO: implement
   };
 
   return (
@@ -62,9 +66,7 @@ const Minter = (props) => {
       <button id="mintButton" onClick={onMintPressed}>
         Mint NFT
       </button>
-      <p id="status">
-        {status}
-      </p>
+      <p id="status">{status}</p>
     </div>
   );
 };
