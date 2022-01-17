@@ -54,7 +54,7 @@ const Minter = (props) => {
     //TODO: implement
     const result = await mintNFT(url, name, description);
     setStatus(result.status);
-    if (success) {
+    if (result.success) {
       setName('');
       setURL('');
       setDescription('');
