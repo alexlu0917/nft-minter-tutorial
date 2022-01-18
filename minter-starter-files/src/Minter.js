@@ -7,7 +7,7 @@ const Minter = (props) => {
   const [status, setStatus] = useState("");
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [url, setURL] = useState("");
+  const [url, setURL] = useState();
 
   useEffect(async () => {
     //TODO: implement
@@ -47,18 +47,25 @@ const Minter = (props) => {
     const result = await connectWallet();
     setStatus(result.status);
     setWallet(result.address);
-    console.log(result, 'result')
+    console.log(result, "result");
   };
 
   const onMintPressed = async () => {
     //TODO: implement
+    console.log(url, 'url')
     const result = await mintNFT(url, name, description);
-    setStatus(result.status);
-    if (result.success) {
-      setName('');
-      setURL('');
-      setDescription('');
-    }
+    // setStatus(result.status);
+    // if (result.success) {
+    //   setName('');
+    //   setURL('');
+    //   setDescription('');
+    // }
+  };
+
+  const getFile = (e) => {
+    // const file = fromEvent(e);
+    console.log(e, 'e')
+    setURL(e.target.files[0]);
   };
 
   return (
@@ -82,9 +89,9 @@ const Minter = (props) => {
       <form>
         <h2>🖼 Link to asset: </h2>
         <input
-          type="text"
+          type="file"
           placeholder="e.g. https://gateway.pinata.cloud/ipfs/<hash>"
-          onChange={(event) => setURL(event.target.value)}
+          onChange={e => getFile(e)}
         />
         <h2>🤔 Name: </h2>
         <input

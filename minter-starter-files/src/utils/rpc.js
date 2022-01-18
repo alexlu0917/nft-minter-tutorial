@@ -1,6 +1,7 @@
-import { pinJSONToIPFS } from "./pinata";
+import { pinJSONToIPFS, pinFileToIPFS } from "./pinata";
 const alchemyKey = process.env.REACT_APP_ALCHEMY_KEY;
-const contractABI = require("./abi.json"); console.log(contractABI, 'abi');
+const contractABI = require("./abi.json");
+console.log(contractABI, "abi");
 const contractAddress = process.env.REACT_APP_CONTRACT_ADDRESS;
 const { createAlchemyWeb3 } = require("@alch/alchemy-web3");
 const web3 = createAlchemyWeb3(alchemyKey);
@@ -88,17 +89,51 @@ async function loadContract() {
 }
 
 export const mintNFT = async (url, name, description) => {
-  if (url.trim() == "" || name.trim() == "" || description.trim() == "") {
+  if (description.trim() == "" || name.trim() == "") {
     return {
       success: false,
       status: "❗Please make sure all fields are completed before minting.",
     };
   }
+  let data = new FormData();
+  data.append("file", url);
+  console.log(data, "data");
+  //metadata is optional
+  const filedata = JSON.stringify({
+    name: url.name,
+    keyvalues: {
+      exampleKey: "exampleValue",
+    },
+  });
+  data.append("pinataMetadata", filedata);
 
-  //make metadata
+  //pinataOptions are optional
+  const pinataOptions = JSON.stringify({
+    cidVersion: 0,
+    customPinPolicy: {
+      regions: [
+        {
+          id: "FRA1",
+          desiredReplicationCount: 1,
+        },
+        {
+          id: "NYC1",
+          desiredReplicationCount: 2,
+        },
+      ],
+    },
+  });
+  data.append('pinataOptions', pinataOptions);
+
+  const result = await pinFileToIPFS(data);
+  if (!result.status) return {
+    success: false,
+    status: "😢 Something went wrong while uploading your image file.",
+  };
+  // make metadata
   const metadata = new Object();
   metadata.name = name;
-  metadata.image = url;
+  metadata.image = result.pinataUrl;
   metadata.description = description;
 
   const pinataResponse = await pinJSONToIPFS(metadata);
@@ -110,7 +145,10 @@ export const mintNFT = async (url, name, description) => {
   }
   const tokenURI = pinataResponse.pinataUrl;
 
-  window.contract = await new web3.eth.Contract(contractABI.abi, contractAddress);
+  window.contract = await new web3.eth.Contract(
+    contractABI.abi,
+    contractAddress
+  );
 
   const transactionParameters = {
     to: contractAddress, // Required except during contract publications.
