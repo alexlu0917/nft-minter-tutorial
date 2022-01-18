@@ -52,7 +52,7 @@ const Minter = (props) => {
 
   const onMintPressed = async () => {
     //TODO: implement
-    console.log(url, 'url')
+    console.log(url, "url");
     const result = await mintNFT(url, name, description);
     // setStatus(result.status);
     // if (result.success) {
@@ -64,7 +64,7 @@ const Minter = (props) => {
 
   const getFile = (e) => {
     // const file = fromEvent(e);
-    console.log(e, 'e')
+    console.log(e, "e");
     setURL(e.target.files[0]);
   };
 
@@ -88,11 +88,15 @@ const Minter = (props) => {
       </p>
       <form>
         <h2>🖼 Link to asset: </h2>
-        <input
-          type="file"
-          placeholder="e.g. https://gateway.pinata.cloud/ipfs/<hash>"
-          onChange={e => getFile(e)}
-        />
+        <label class="custom-file-upload">
+          <input
+            type="file"
+            placeholder="e.g. https://gateway.pinata.cloud/ipfs/<hash>"
+            onChange={(e) => getFile(e)}
+          />
+          {url ? url?.name : 'Custom Upload'}
+        </label>
+
         <h2>🤔 Name: </h2>
         <input
           type="text"
